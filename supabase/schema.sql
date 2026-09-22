@@ -448,3 +448,11 @@ end;
 $$ language plpgsql security definer;
 
 grant execute on function request_loan to authenticated;
+
+-- ============================================
+-- POLÍTICA: permitir agregar tarjetas nuevas desde la app
+-- ============================================
+drop policy if exists "Users can insert own cards" on cards;
+create policy "Users can insert own cards"
+  on cards for insert
+  with check (auth.uid() = user_id);

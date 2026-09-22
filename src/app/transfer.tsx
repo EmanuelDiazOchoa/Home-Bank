@@ -2,6 +2,7 @@ import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { useAccountStore } from "../store/accountStore";
+import { useThemeStore } from "../store/themeStore";
 
 export default function TransferScreen() {
   const [alias, setAlias] = useState("");
@@ -9,6 +10,7 @@ export default function TransferScreen() {
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { theme } = useThemeStore();
 
   const { accounts, transferMoney, fetchAccounts } = useAccountStore();
   const mainAccount = accounts[0];
@@ -45,35 +47,48 @@ export default function TransferScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Nueva transferencia</Text>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <Text style={{ color: theme.primary, fontSize: 16 }}>← Volver</Text>
+      </TouchableOpacity>
 
-      <Text style={styles.balanceText}>
+      <Text style={[styles.title, { color: theme.text }]}>Nueva transferencia</Text>
+
+      <Text style={[styles.balanceText, { color: theme.textSecondary }]}>
         Saldo disponible: ${mainAccount?.balance.toLocaleString("es-AR")}
       </Text>
 
       <TextInput
-        style={styles.input}
+        style={[styles.input, { borderColor: theme.border, color: theme.text, backgroundColor: theme.surface }]}
         placeholder="Alias o CBU del destinatario"
+        placeholderTextColor={theme.textSecondary}
         value={alias}
         onChangeText={setAlias}
         autoCapitalize="none"
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, { borderColor: theme.border, color: theme.text, backgroundColor: theme.surface }]}
         placeholder="Monto"
+        placeholderTextColor={theme.textSecondary}
         value={amount}
         onChangeText={setAmount}
         keyboardType="numeric"
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, { borderColor: theme.border, color: theme.text, backgroundColor: theme.surface }]}
         placeholder="Descripción (opcional)"
+        placeholderTextColor={theme.textSecondary}
         value={description}
         onChangeText={setDescription}
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleTransfer} disabled={loading}>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: theme.primary }]}
+        onPress={handleTransfer}
+        disabled={loading}
+        accessibilityRole="button"
+        accessibilityLabel="Confirmar transferencia"
+      >
         <Text style={styles.buttonText}>{loading ? "Procesando..." : "Transferir"}</Text>
       </TouchableOpacity>
     </View>
@@ -82,18 +97,17 @@ export default function TransferScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, paddingTop: 60 },
+  backButton: { marginBottom: 20 },
   title: { fontSize: 24, fontWeight: "bold", marginBottom: 8 },
-  balanceText: { fontSize: 14, color: "#666", marginBottom: 24 },
+  balanceText: { fontSize: 14, marginBottom: 24 },
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
     borderRadius: 8,
     padding: 14,
     marginBottom: 12,
     fontSize: 16,
   },
   button: {
-    backgroundColor: "#0066FF",
     borderRadius: 8,
     padding: 16,
     alignItems: "center",

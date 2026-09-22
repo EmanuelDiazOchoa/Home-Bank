@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useInvestmentStore } from "../../store/investmentStore";
 import { useLoanStore } from "../../store/loanStore";
 import { useAccountStore } from "../../store/accountStore";
 import { useThemeStore } from "../../store/themeStore";
+
 
 const FIXED_TERM_RATE = 40;
 const LOAN_RATE = 60;
@@ -144,8 +146,11 @@ export default function InvestmentsScreen() {
 
           <Text style={[styles.sectionTitle, { color: theme.text }]}>Mis plazos fijos</Text>
           {investments.length === 0 ? (
-            <Text style={[styles.empty, { color: theme.textSecondary }]}>No tenés inversiones activas.</Text>
-          ) : (
+  <View style={styles.emptyBox}>
+    <Ionicons name="trending-up-outline" size={32} color={theme.textSecondary} />
+    <Text style={[styles.empty, { color: theme.textSecondary }]}>No tenés inversiones activas.</Text>
+  </View>
+) : (
             investments.map((inv) => (
               <View key={inv.id} style={[styles.listItem, { backgroundColor: theme.surface }]}>
                 <Text style={[styles.listItemTitle, { color: theme.text }]}>
@@ -197,8 +202,11 @@ export default function InvestmentsScreen() {
 
           <Text style={[styles.sectionTitle, { color: theme.text }]}>Mis préstamos</Text>
           {loans.length === 0 ? (
-            <Text style={[styles.empty, { color: theme.textSecondary }]}>No tenés préstamos activos.</Text>
-          ) : (
+  <View style={styles.emptyBox}>
+    <Ionicons name="cash-outline" size={32} color={theme.textSecondary} />
+    <Text style={[styles.empty, { color: theme.textSecondary }]}>No tenés préstamos activos.</Text>
+  </View>
+) : (
             loans.map((loan) => (
               <View key={loan.id} style={[styles.listItem, { backgroundColor: theme.surface }]}>
                 <Text style={[styles.listItemTitle, { color: theme.text }]}>
@@ -230,6 +238,7 @@ const styles = StyleSheet.create({
   button: { borderRadius: 8, padding: 16, alignItems: "center", marginBottom: 24 },
   buttonText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
   sectionTitle: { fontSize: 16, fontWeight: "bold", marginBottom: 12 },
+  emptyBox: { alignItems: "center", marginTop: 40, gap: 8 },
   empty: { textAlign: "center" },
   listItem: { borderRadius: 8, padding: 14, marginBottom: 10 },
   listItemTitle: { fontSize: 16, fontWeight: "bold" },

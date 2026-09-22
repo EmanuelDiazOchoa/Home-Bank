@@ -7,7 +7,7 @@ interface AuthState {
   isLoading: boolean;
   setSession: (session: Session | null) => void;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null; needsConfirmation: boolean }>;
   signOut: () => Promise<void>;
   initialize: () => Promise<void>;
 }
@@ -26,17 +26,15 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   signUp: async (email, password, fullName) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: fullName },
-      },
-    });
-    if (error) return { error: error.message };
-    set({ session: data.session });
-    return { error: null };
-  },
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { full_name: fullName } },
+  });
+  if (error) return { error: error.message, needsConfirmation: false };
+  set({ session: data.session });
+  return { error: null, needsConfirmation: !data.session };
+},
 
   signOut: async () => {
     await supabase.auth.signOut();

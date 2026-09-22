@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, FlatList, 
 import { useBillStore } from "../../store/billStore";
 import { useAccountStore } from "../../store/accountStore";
 import { useThemeStore } from "../../store/themeStore";
+import { Ionicons } from "@expo/vector-icons";
 
 function getDaysUntilDue(dueDate: string) {
   const today = new Date();
@@ -60,8 +61,11 @@ export default function BillsScreen() {
         data={bills}
         keyExtractor={(item) => item.id}
         ListEmptyComponent={
-          <Text style={[styles.empty, { color: theme.textSecondary }]}>No tenés servicios cargados.</Text>
-        }
+  <View style={styles.emptyBox}>
+    <Ionicons name="receipt-outline" size={32} color={theme.textSecondary} />
+    <Text style={[styles.empty, { color: theme.textSecondary }]}>No tenés servicios cargados.</Text>
+  </View>
+}
         renderItem={({ item }) => {
           const daysLeft = getDaysUntilDue(item.due_date);
           const isOverdue = daysLeft < 0 && !item.is_paid;
@@ -118,6 +122,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, paddingTop: 60 },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
   title: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
+  emptyBox: { alignItems: "center", marginTop: 40, gap: 8 },
   empty: { textAlign: "center", marginTop: 40 },
   billCard: { borderRadius: 12, padding: 16, marginBottom: 14 },
   billHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 4 },

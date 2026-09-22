@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useAccountStore } from "../../store/accountStore";
 import { useThemeStore } from "../../store/themeStore";
 
@@ -54,8 +55,11 @@ export default function AnalyticsScreen() {
       <Text style={[styles.title, { color: theme.text }]}>Mis gastos</Text>
 
       {expenseData.length === 0 ? (
-        <Text style={[styles.empty, { color: theme.textSecondary }]}>Todavía no tenés gastos registrados.</Text>
-      ) : (
+  <View style={styles.emptyBox}>
+    <Ionicons name="pie-chart-outline" size={32} color={theme.textSecondary} />
+    <Text style={[styles.empty, { color: theme.textSecondary }]}>Todavía no tenés gastos registrados.</Text>
+  </View>
+) : (
         <>
           <Text style={[styles.totalLabel, { color: theme.textSecondary }]}>Total gastado</Text>
           <Text style={[styles.totalAmount, { color: theme.text }]}>
@@ -102,6 +106,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, paddingTop: 60 },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
   title: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
+  emptyBox: { alignItems: "center", marginTop: 40, gap: 8 },
   empty: { textAlign: "center", marginTop: 40 },
   totalLabel: { fontSize: 14 },
   totalAmount: { fontSize: 32, fontWeight: "bold", marginBottom: 20 },
