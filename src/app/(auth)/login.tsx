@@ -4,6 +4,7 @@ import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuthStore } from "../../store/authStore";
 import { useThemeStore } from "../../store/themeStore";
+import { showAlert } from "../../utils/appAlert";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -12,15 +13,16 @@ export default function LoginScreen() {
   const signIn = useAuthStore((state) => state.signIn);
   const { theme } = useThemeStore();
 
+
   async function handleLogin() {
     if (!email || !password) {
-      Alert.alert("Error", "Completá todos los campos");
+      showAlert("Error", "Completá todos los campos");
       return;
     }
     setLoading(true);
     const { error } = await signIn(email, password);
     setLoading(false);
-    if (error) Alert.alert("Error al iniciar sesión", error);
+    if (error) showAlert("Error al iniciar sesión", error);
   }
 
   return (

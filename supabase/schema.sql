@@ -452,6 +452,8 @@ grant execute on function request_loan to authenticated;
 -- ============================================
 -- POLÍTICA: permitir agregar tarjetas nuevas desde la app
 -- ============================================
+-- Ver qué políticas existen actualmente en cards
+select policyname, cmd from pg_policies where tablename = 'cards';
 drop policy if exists "Users can insert own cards" on cards;
 create policy "Users can insert own cards"
   on cards for insert

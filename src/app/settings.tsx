@@ -5,6 +5,7 @@ import { useThemeStore } from "../store/themeStore";
 import { useAuthStore } from "../store/authStore";
 import { useProfileStore } from "../store/profileStore";
 import { COLOR_SCHEME_LABELS, COLOR_SCHEME_PREVIEW, ColorScheme } from "../theme/colors";
+import { showAlert } from "../utils/appAlert";
 
 export default function SettingsScreen() {
   const { theme, mode, scheme, toggleMode, setScheme } = useThemeStore();
@@ -14,12 +15,12 @@ export default function SettingsScreen() {
 
   const schemes = Object.keys(COLOR_SCHEME_LABELS) as ColorScheme[];
 
-  function confirmSignOut() {
-    Alert.alert("Cerrar sesión", "¿Seguro que querés salir de tu cuenta?", [
-      { text: "Cancelar", style: "cancel" },
-      { text: "Salir", style: "destructive", onPress: signOut },
-    ]);
-  }
+function confirmSignOut() {
+  showAlert("Cerrar sesión", "¿Seguro que querés salir de tu cuenta?", [
+    { text: "Cancelar", style: "cancel" },
+    { text: "Salir", style: "destructive", onPress: signOut },
+  ]);
+}
 
   return (
     <ScrollView
@@ -59,7 +60,7 @@ export default function SettingsScreen() {
           icon="lock-closed-outline"
           label="Cambiar contraseña"
           theme={theme}
-          onPress={() => Alert.alert("Próximamente", "Esta función estará disponible pronto.")}
+          onPress={() => showAlert("Próximamente", "Esta función estará disponible pronto.")}
         />
         <Divider theme={theme} />
         <SettingsRow
@@ -67,14 +68,14 @@ export default function SettingsScreen() {
           label="Biometría"
           theme={theme}
           rightLabel="Próximamente"
-          onPress={() => Alert.alert("Próximamente", "Autenticación biométrica en desarrollo.")}
+          onPress={() => showAlert("Próximamente", "Autenticación biométrica en desarrollo.")}
         />
         <Divider theme={theme} />
         <SettingsRow
           icon="phone-portrait-outline"
           label="Dispositivos vinculados"
           theme={theme}
-          onPress={() => Alert.alert("Próximamente", "Esta función estará disponible pronto.")}
+          onPress={() => showAlert("Próximamente", "Esta función estará disponible pronto.")}
           isLast
         />
       </View>
@@ -139,14 +140,14 @@ export default function SettingsScreen() {
           icon="help-circle-outline"
           label="Centro de ayuda"
           theme={theme}
-          onPress={() => Alert.alert("Próximamente", "Esta función estará disponible pronto.")}
+          onPress={() => showAlert("Próximamente", "Esta función estará disponible pronto.")}
         />
         <Divider theme={theme} />
         <SettingsRow
           icon="chatbubble-ellipses-outline"
           label="Contactar soporte"
           theme={theme}
-          onPress={() => Alert.alert("Próximamente", "Esta función estará disponible pronto.")}
+          onPress={() => showAlert("Próximamente", "Esta función estará disponible pronto.")}
         />
         <Divider theme={theme} />
         <SettingsRow

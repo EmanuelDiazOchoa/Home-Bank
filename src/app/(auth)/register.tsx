@@ -4,6 +4,7 @@ import { Link, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuthStore } from "../../store/authStore";
 import { useThemeStore } from "../../store/themeStore";
+import { showAlert } from "../../utils/appAlert"; 
 
 export default function RegisterScreen() {
   const [fullName, setFullName] = useState("");
@@ -14,13 +15,13 @@ export default function RegisterScreen() {
   const router = useRouter();
   const { theme } = useThemeStore();
 
-  async function handleRegister() {
+   async function handleRegister() {
     if (!fullName || !email || !password) {
-      Alert.alert("Error", "Completá todos los campos");
+      showAlert("Error", "Completá todos los campos");
       return;
     }
     if (password.length < 6) {
-      Alert.alert("Error", "La contraseña debe tener al menos 6 caracteres");
+      showAlert("Error", "La contraseña debe tener al menos 6 caracteres");
       return;
     }
     setLoading(true);
@@ -28,9 +29,9 @@ export default function RegisterScreen() {
     setLoading(false);
 
     if (error) {
-      Alert.alert("Error al registrarse", error);
+      showAlert("Error al registrarse", error);
     } else if (needsConfirmation) {
-      Alert.alert(
+      showAlert(
         "Revisá tu email 📩",
         "Te enviamos un link de confirmación. Confirmalo y después iniciá sesión.",
         [{ text: "Ir a iniciar sesión", onPress: () => router.replace("/login") }]

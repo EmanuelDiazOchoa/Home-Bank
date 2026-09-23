@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { useAccountStore } from "../store/accountStore";
 import { useThemeStore } from "../store/themeStore";
+import { showAlert } from "../utils/appAlert";
 
 export default function TransferScreen() {
   const [alias, setAlias] = useState("");
@@ -17,13 +18,13 @@ export default function TransferScreen() {
 
   async function handleTransfer() {
     if (!alias || !amount) {
-      Alert.alert("Error", "Completá el alias y el monto");
+      showAlert("Error", "Completá el alias y el monto");
       return;
     }
 
     const numericAmount = parseFloat(amount);
     if (isNaN(numericAmount) || numericAmount <= 0) {
-      Alert.alert("Error", "Ingresá un monto válido");
+      showAlert("Error", "Ingresá un monto válido");
       return;
     }
 
@@ -32,9 +33,9 @@ export default function TransferScreen() {
     setLoading(false);
 
     if (error) {
-      Alert.alert("Error en la transferencia", error);
+      showAlert("Error en la transferencia", error);
     } else {
-      Alert.alert("¡Listo! ✅", "Transferencia realizada con éxito", [
+      showAlert("¡Listo! ✅", "Transferencia realizada con éxito", [
         {
           text: "OK",
           onPress: async () => {

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Stack, useRouter, useSegments, useRootNavigationState } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuthStore } from "../store/authStore";
+import AppAlert from "../components/AppAlert";
 
 export default function RootLayout() {
   const { session, isLoading, initialize } = useAuthStore();
@@ -43,5 +44,10 @@ export default function RootLayout() {
 
   if (isLoading || hasSeenOnboarding === null) return null;
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+  <>
+    <Stack screenOptions={{ headerShown: false }} />
+    <AppAlert />
+  </>
+);
 }

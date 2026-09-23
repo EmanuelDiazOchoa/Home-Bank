@@ -5,6 +5,7 @@ import { useInvestmentStore } from "../../store/investmentStore";
 import { useLoanStore } from "../../store/loanStore";
 import { useAccountStore } from "../../store/accountStore";
 import { useThemeStore } from "../../store/themeStore";
+import { showAlert } from "../../utils/appAlert";
 
 
 const FIXED_TERM_RATE = 40;
@@ -42,20 +43,20 @@ export default function InvestmentsScreen() {
     return totalWithInterest / numInstallments;
   }
 
-  async function handleInvest() {
+ async function handleInvest() {
     const amount = parseFloat(investAmount);
     const days = parseInt(termDays);
     if (!amount || amount <= 0) {
-      Alert.alert("Error", "Ingresá un monto válido");
+      showAlert("Error", "Ingresá un monto válido");
       return;
     }
     const { error } = await createInvestment(mainAccount.id, amount, FIXED_TERM_RATE, days);
     if (error) {
-      Alert.alert("Error", error);
+      showAlert("Error", error);
     } else {
       await fetchAccounts();
       setInvestAmount("");
-      Alert.alert("¡Listo! ✅", "Plazo fijo constituido correctamente");
+      showAlert("¡Listo! ✅", "Plazo fijo constituido correctamente");
     }
   }
 
@@ -63,16 +64,16 @@ export default function InvestmentsScreen() {
     const amount = parseFloat(loanAmount);
     const numInstallments = parseInt(installments);
     if (!amount || amount <= 0) {
-      Alert.alert("Error", "Ingresá un monto válido");
+      showAlert("Error", "Ingresá un monto válido");
       return;
     }
     const { error } = await requestLoan(mainAccount.id, amount, LOAN_RATE, numInstallments);
     if (error) {
-      Alert.alert("Error", error);
+      showAlert("Error", error);
     } else {
       await fetchAccounts();
       setLoanAmount("");
-      Alert.alert("¡Listo! ✅", "Préstamo acreditado en tu cuenta");
+      showAlert("¡Listo! ✅", "Préstamo acreditado en tu cuenta");
     }
   }
 
