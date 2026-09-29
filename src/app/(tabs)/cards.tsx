@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator, Switch, TouchableOpacity, Alert } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, Switch, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCardStore } from "../../store/cardStore";

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, FlatList, Alert } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useBillStore } from "../../store/billStore";
 import { useAccountStore } from "../../store/accountStore";
