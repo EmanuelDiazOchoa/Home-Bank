@@ -6,6 +6,7 @@ import { useLoanStore } from "../../store/loanStore";
 import { useAccountStore } from "../../store/accountStore";
 import { useThemeStore } from "../../store/themeStore";
 import { showAlert } from "../../utils/appAlert";
+import { formatMoney } from "../../utils/format";
 
 
 const FIXED_TERM_RATE = 40;

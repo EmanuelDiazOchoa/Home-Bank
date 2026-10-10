@@ -20,7 +20,7 @@ interface CardState {
   isLoading: boolean;
   fetchCards: () => Promise<void>;
   toggleBlockCard: (cardId: string, block: boolean) => Promise<{ error: string | null }>;
-  addCard: (accountId: string, userId: string, cardType: 'debit' | 'credit') => Promise<{ error: string | null }>;
+  addCard: (cardType: 'debit' | 'credit') => Promise<{ error: string | null }>;
 }
 
 export const useCardStore = create<CardState>((set, get) => ({
@@ -57,25 +57,8 @@ export const useCardStore = create<CardState>((set, get) => ({
     return { error: null };
   },
 
-  addCard: async (accountId, userId, cardType) => {
-    const prefix = cardType === "debit" ? "4" : "5";
-    const cardNumber = prefix + Math.floor(Math.random() * 1e15).toString().padStart(15, "0");
-    const expiry = new Date();
-    expiry.setFullYear(expiry.getFullYear() + 4);
-    const expiryStr = `${String(expiry.getMonth() + 1).padStart(2, "0")}/${String(expiry.getFullYear()).slice(-2)}`;
-    const cvv = String(Math.floor(Math.random() * 900) + 100);
-
-    const { error } = await supabase.from("cards").insert({
-      account_id: accountId,
-      user_id: userId,
-      card_type: cardType,
-      card_number: cardNumber,
-      card_holder: "TITULAR",
-      expiry_date: expiryStr,
-      cvv,
-      credit_limit: cardType === "credit" ? 100000 : 0,
-    });
-
+  addCard: async (cardType) => {
+    const { error } = await supabase.rpc('create_card', { p_card_type: cardType });
     if (error) return { error: error.message };
     await get().fetchCards();
     return { error: null };

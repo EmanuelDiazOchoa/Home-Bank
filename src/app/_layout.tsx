@@ -3,10 +3,12 @@ import { Stack, useRouter, useSegments, useRootNavigationState } from "expo-rout
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuthStore } from "../store/authStore";
 import AppAlert from "../components/AppAlert";
+import AnimatedSplash from "../components/AnimatedSplash";
 
 export default function RootLayout() {
   const { session, isLoading, initialize } = useAuthStore();
   const [hasSeenOnboarding, setHasSeenOnboarding] = useState<boolean | null>(null);
+  const [splashDone, setSplashDone] = useState(false);
   const router = useRouter();
   const segments = useSegments();
   const navigationState = useRootNavigationState();
@@ -29,10 +31,10 @@ export default function RootLayout() {
     const inOnboarding = segments[0] === "onboarding";
 
     if (!hasSeenOnboarding && !inOnboarding) {
-      setHasSeenOnboarding(true); // 👈 actualiza el estado local YA, no solo el storage
+      setHasSeenOnboarding(true);
       AsyncStorage.setItem("hasSeenOnboarding", "true");
       router.replace("/onboarding");
-      return; // 👈 corta acá para no evaluar las condiciones de abajo en el mismo ciclo
+      return;
     }
 
     if (!session && !inAuthGroup && !inOnboarding) {
@@ -42,12 +44,13 @@ export default function RootLayout() {
     }
   }, [session, isLoading, segments, navigationState?.key, hasSeenOnboarding]);
 
-  if (isLoading || hasSeenOnboarding === null) return null;
+  const appReady = !isLoading && hasSeenOnboarding !== null;
 
   return (
-  <>
-    <Stack screenOptions={{ headerShown: false }} />
-    <AppAlert />
-  </>
-);
+    <>
+      {appReady && <Stack screenOptions={{ headerShown: false }} />}
+      <AppAlert />
+      {!splashDone && <AnimatedSplash ready={appReady} onFinish={() => setSplashDone(true)} />}
+    </>
+  );
 }

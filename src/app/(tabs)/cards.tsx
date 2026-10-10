@@ -3,8 +3,6 @@ import { View, Text, StyleSheet, ActivityIndicator, Switch, TouchableOpacity } f
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCardStore } from "../../store/cardStore";
-import { useAccountStore } from "../../store/accountStore";
-import { useAuthStore } from "../../store/authStore";
 import { useThemeStore } from "../../store/themeStore";
 import { showAlert } from "../../utils/appAlert";
 
@@ -16,40 +14,27 @@ function maskCardNumber(number: string, revealed: boolean) {
 
 export default function CardsScreen() {
   const { cards, isLoading, fetchCards, toggleBlockCard, addCard } = useCardStore();
-  const { accounts, fetchAccounts } = useAccountStore();
-  const { session } = useAuthStore();
   const { theme } = useThemeStore();
   const [revealed, setRevealed] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     fetchCards();
-    fetchAccounts();
   }, []);
 
   function toggleReveal(cardId: string) {
     setRevealed((prev) => ({ ...prev, [cardId]: !prev[cardId] }));
   }
 
-  function handleAddCard() {
-    const mainAccount = accounts[0];
-    if (!mainAccount || !session) return;
+  async function createCard(type: "debit" | "credit") {
+    const { error } = await addCard(type);
+    if (error) showAlert("Error", error);
+  }
 
-     showAlert("Nueva tarjeta", "¿Qué tipo de tarjeta querés agregar?", [
+  function handleAddCard() {
+    showAlert("Nueva tarjeta", "¿Qué tipo de tarjeta querés agregar?", [
       { text: "Cancelar", style: "cancel" },
-      {
-        text: "Débito",
-        onPress: async () => {
-          const { error } = await addCard(mainAccount.id, session.user.id, "debit");
-          if (error) showAlert("Error", error);
-        },
-      },
-      {
-        text: "Crédito",
-        onPress: async () => {
-          const { error } = await addCard(mainAccount.id, session.user.id, "credit");
-          if (error) showAlert("Error", error);
-        },
-      },
+      { text: "Débito", onPress: () => createCard("debit") },
+      { text: "Crédito", onPress: () => createCard("credit") },
     ]);
   }
 

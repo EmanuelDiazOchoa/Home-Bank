@@ -458,3 +458,105 @@ drop policy if exists "Users can insert own cards" on cards;
 create policy "Users can insert own cards"
   on cards for insert
   with check (auth.uid() = user_id);
+  
+  -- Alta de tarjetas desde el servidor
+create or replace function create_card(p_card_type text)
+returns json as $$
+declare
+  v_user_id uuid := auth.uid();
+  v_account_id uuid;
+  v_holder text;
+begin
+  if v_user_id is null then
+    raise exception 'Sesión no válida';
+  end if;
+
+  if p_card_type not in ('debit', 'credit') then
+    raise exception 'Tipo de tarjeta inválido';
+  end if;
+
+  select id into v_account_id
+  from accounts
+  where user_id = v_user_id
+  order by created_at
+  limit 1;
+
+  if v_account_id is null then
+    raise exception 'No se encontró una cuenta asociada';
+  end if;
+
+  select upper(coalesce(full_name, 'USUARIO')) into v_holder
+  from profiles
+  where id = v_user_id;
+
+  insert into cards (account_id, user_id, card_type, card_number, card_holder, expiry_date, cvv, credit_limit)
+  values (
+    v_account_id,
+    v_user_id,
+    p_card_type,
+    case when p_card_type = 'debit' then '4' else '5' end
+      || lpad(floor(random() * 1000000000000000)::bigint::text, 15, '0'),
+    coalesce(v_holder, 'USUARIO'),
+    to_char(now() + interval '4 years', 'MM/YY'),
+    lpad(floor(random() * 1000)::int::text, 3, '0'),
+    case when p_card_type = 'credit' then 100000 else 0 end
+  );
+
+  return json_build_object('success', true);
+end;
+$$ language plpgsql security definer set search_path = public;
+
+grant execute on function create_card(text) to authenticated;
+
+-- El registro ahora también crea 3 servicios de ejemplo
+create or replace function public.handle_new_user()
+returns trigger as $$
+declare
+  new_account_id uuid;
+begin
+  insert into public.profiles (id, full_name)
+  values (new.id, new.raw_user_meta_data->>'full_name');
+
+  insert into public.accounts (user_id, account_type, currency, balance, alias, cbu)
+  values (
+    new.id,
+    'savings',
+    'ARS',
+    50000,
+    lower(replace(new.raw_user_meta_data->>'full_name', ' ', '.')) || '.homebank',
+    '0000003100' || floor(random() * 100000000000)::text
+  )
+  returning id into new_account_id;
+
+  insert into public.cards (account_id, user_id, card_type, card_number, card_holder, expiry_date, cvv, credit_limit)
+  values (
+    new_account_id,
+    new.id,
+    'debit',
+    '4' || floor(random() * 1000000000000000)::text,
+    upper(coalesce(new.raw_user_meta_data->>'full_name', 'USUARIO')),
+    to_char(now() + interval '4 years', 'MM/YY'),
+    lpad(floor(random() * 1000)::text, 3, '0'),
+    0
+  );
+
+  insert into public.bills (user_id, account_id, company_name, category, amount, due_date)
+  values
+    (new.id, new_account_id, 'Edesur', 'Luz', 15000, current_date + 5),
+    (new.id, new_account_id, 'Metrogas', 'Gas', 8000, current_date + 10),
+    (new.id, new_account_id, 'Movistar', 'Internet', 12000, current_date - 2);
+
+  return new;
+end;
+$$ language plpgsql security definer;
+
+-- Servicios para los usuarios que ya existen y no tienen ninguno (como Pepe)
+insert into bills (user_id, account_id, company_name, category, amount, due_date)
+select a.user_id, a.id, v.company, v.category, v.amount, current_date + v.days
+from accounts a
+cross join (values
+  ('Edesur', 'Luz', 15000, 5),
+  ('Metrogas', 'Gas', 8000, 10),
+  ('Movistar', 'Internet', 12000, -2)
+) as v(company, category, amount, days)
+where not exists (select 1 from bills b where b.user_id = a.user_id);
