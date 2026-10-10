@@ -41,10 +41,10 @@ const baseDark = {
 
 const accentColors: Record<ColorScheme, { primary: string; primaryLight: string }> = {
   blue: { primary: "#0066FF", primaryLight: "#3385FF" },
-  green: { primary: "#00A650", primaryLight: "#2ECC71" },
-  purple: { primary: "#8B5CF6", primaryLight: "#A78BFA" },
-  orange: { primary: "#FF7A00", primaryLight: "#FF9F40" },
-  red: { primary: "#E53935", primaryLight: "#EF5350" },
+  green: { primary: "#00873F", primaryLight: "#2ECC71" },
+  purple: { primary: "#7C4DEB", primaryLight: "#A78BFA" },
+  orange: { primary: "#BF5500", primaryLight: "#FF9F40" },
+  red: { primary: "#D32F2F", primaryLight: "#EF5350" },
 };
 
 export function buildTheme(mode: ThemeMode, scheme: ColorScheme): Theme {
