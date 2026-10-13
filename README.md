@@ -125,6 +125,16 @@ $$ language plpgsql security definer;
 
 La versión completa, con todas las validaciones, está en [`supabase/schema.sql`](./supabase/schema.sql).
 
+### Seguridad: el cliente solo lee, el servidor decide
+
+El cliente usa la clave pública de Supabase, así que cualquiera con una sesión podría llamar a la API directamente, sin pasar por la app. Por eso la seguridad no depende de la interfaz:
+
+- **Solo lectura directa.** Con RLS cada usuario ve únicamente sus filas, y a nivel de tabla se revocaron los permisos de escritura (`INSERT`/`UPDATE`/`DELETE`). Las únicas excepciones son bloquear una tarjeta (`is_blocked`) y editar datos del perfil, limitadas por columna.
+- **Escrituras solo vía funciones.** Transferencias, pagos, plazos fijos, préstamos y alta de tarjetas son funciones `SECURITY DEFINER` que validan la identidad con `auth.uid()` y exigen que las cuentas y facturas pertenezcan a quien llama.
+- **Reglas de negocio en el servidor.** Tasas de interés, topes de préstamo, plazos y montos los fija o valida la base de datos; los valores que manda el cliente se ignoran o se acotan. Los números de tarjeta y CVV también los genera el servidor.
+- **Consistencia.** Bloqueo de filas (`FOR UPDATE`) para evitar condiciones de carrera y doble pago, y una restricción que impide saldos negativos.
+- **Sin acceso anónimo.** Las funciones financieras solo se pueden ejecutar con una sesión iniciada.
+
 ## 🚀 Instalación y uso
 
 ### Requisitos previos
@@ -170,7 +180,7 @@ Escaneá el QR con Expo Go (Android/iOS) o presioná `a`/`i` para abrir en un em
 - [x] Temas personalizables + accesibilidad
 - [x] Onboarding inicial
 - [x] Alertas propias con tema
-- [ ] Animaciones de transición y splash animado
+- [x] Animaciones de transición y splash animado
 - [ ] Notificaciones push
 - [ ] Autenticación biométrica (Face ID / huella)
 

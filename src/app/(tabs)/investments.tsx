@@ -131,9 +131,9 @@ export default function InvestmentsScreen() {
 
           {investAmount ? (
             <View style={[styles.simulationBox, { backgroundColor: theme.primary + "1A" }]}>
-              <Text style={{ color: theme.text }}>Interés estimado: ${interest.toFixed(2)}</Text>
+              <Text style={{ color: theme.text }}>Interés estimado: {formatMoney(interest)}</Text>
               <Text style={[styles.simulationTotal, { color: theme.primary }]}>
-                Total al vencimiento: ${total.toFixed(2)}
+                Total al vencimiento: {formatMoney(total)}
               </Text>
             </View>
           ) : null}
@@ -189,7 +189,7 @@ export default function InvestmentsScreen() {
           {loanAmount ? (
             <View style={[styles.simulationBox, { backgroundColor: theme.primary + "1A" }]}>
               <Text style={{ color: theme.text }}>
-                {installments} cuotas de ${installmentAmount.toFixed(2)}
+                {installments} cuotas de {formatMoney(installmentAmount)}
               </Text>
             </View>
           ) : null}
@@ -215,7 +215,7 @@ export default function InvestmentsScreen() {
                   ${loan.amount.toLocaleString("es-AR")}
                 </Text>
                 <Text style={[styles.listItemSubtitle, { color: theme.textSecondary }]}>
-                  {loan.installments} cuotas de ${loan.installment_amount.toFixed(2)}
+                  {loan.installments} cuotas de {formatMoney(loan.installment_amount)}
                 </Text>
               </View>
             ))

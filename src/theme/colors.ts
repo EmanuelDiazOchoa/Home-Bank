@@ -63,8 +63,8 @@ export const COLOR_SCHEME_LABELS: Record<ColorScheme, string> = {
 
 export const COLOR_SCHEME_PREVIEW: Record<ColorScheme, string> = {
   blue: "#0066FF",
-  green: "#00A650",
-  purple: "#8B5CF6",
-  orange: "#FF7A00",
-  red: "#E53935",
+  green: "#00873F",
+  purple: "#7C4DEB",
+  orange: "#BF5500",
+  red: "#D32F2F",
 };
