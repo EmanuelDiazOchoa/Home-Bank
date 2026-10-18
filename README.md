@@ -181,7 +181,7 @@ Escaneá el QR con Expo Go (Android/iOS) o presioná `a`/`i` para abrir en un em
 - [x] Temas personalizables + accesibilidad
 - [x] Onboarding inicial
 - [x] Alertas propias con tema
-- [ ] Animaciones de transición y splash animado
+- [x] Animaciones de transición y splash animado
 - [ ] Notificaciones push
 - [ ] Autenticación biométrica (Face ID / huella)
 
