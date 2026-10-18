@@ -25,9 +25,11 @@ export interface Transaction {
 interface AccountState {
   accounts: Account[];
   transactions: Transaction[];
+  analyticsTransactions: Transaction[];
   isLoading: boolean;
   fetchAccounts: () => Promise<void>;
   fetchTransactions: (accountId: string) => Promise<void>;
+  fetchAnalyticsTransactions: (accountId: string, months?: number) => Promise<void>;
   transferMoney: (
     originAccountId: string,
     destinationAlias: string,
@@ -39,6 +41,7 @@ interface AccountState {
 export const useAccountStore = create<AccountState>((set) => ({
   accounts: [],
   transactions: [],
+  analyticsTransactions: [],
   isLoading: false,
 
   fetchAccounts: async () => {
@@ -64,6 +67,26 @@ export const useAccountStore = create<AccountState>((set) => ({
 
     if (!error && data) {
       set({ transactions: data });
+    }
+  },
+
+  // Movimientos de los últimos N meses (para la pantalla de Análisis)
+  fetchAnalyticsTransactions: async (accountId: string, months = 6) => {
+    const since = new Date();
+    since.setHours(0, 0, 0, 0);
+    since.setDate(1);
+    since.setMonth(since.getMonth() - (months - 1));
+
+    const { data, error } = await supabase
+      .from('transactions')
+      .select('*')
+      .eq('account_id', accountId)
+      .gte('created_at', since.toISOString())
+      .order('created_at', { ascending: false })
+      .limit(1000);
+
+    if (!error && data) {
+      set({ analyticsTransactions: data });
     }
   },
 

@@ -45,9 +45,10 @@ No mueve dinero real ni se conecta a ningún banco: el dinero es simulado, pero 
 - 💰 **Cuentas** — saldo en tiempo real (con opción de ocultarlo), alias y CBU generados automáticamente, historial de movimientos
 - 💸 **Transferencias** — débito/crédito atómico entre cuentas por alias, con validación de fondos del lado del servidor
 - 💳 **Tarjetas** — débito y crédito, número enmascarado con opción de revelarlo, alta de tarjetas nuevas y bloqueo/desbloqueo en tiempo real
-- 🧾 **Pagos de servicios** — luz, gas, internet, con estados (pendiente / próximo a vencer / vencido / pagado) y resumen de pagos pendientes
+- 🧾 **Pagos de servicios** — alta de servicios propios con categoría, importe y vencimiento; estados con los días que faltan, pago y baja de pendientes
 - 📈 **Inversiones y préstamos** — simulador de plazo fijo con cálculo de interés y simulador de préstamos con cuotas
-- 📊 **Analytics** — desglose visual de gastos por categoría
+- 📊 **Análisis** — ingresos contra gastos por período, gráfico de dona por categoría y evolución de los últimos 6 meses (las inversiones y préstamos no cuentan como gasto ni ingreso)
+- 🔔 **Vencimientos** — la campana del inicio avisa cuántos servicios están vencidos o por vencer
 - 🎨 **Apariencia personalizable** — modo claro/oscuro y 5 paletas de color
 - ♿ **Accesibilidad** — `accessibilityLabel` y `accessibilityRole` en los elementos interactivos, y colores de acento con contraste mínimo de 4.5:1 en botones
 - 🔔 **Alertas propias** — modal temático en lugar de los alerts nativos del sistema
@@ -180,7 +181,7 @@ Escaneá el QR con Expo Go (Android/iOS) o presioná `a`/`i` para abrir en un em
 - [x] Temas personalizables + accesibilidad
 - [x] Onboarding inicial
 - [x] Alertas propias con tema
-- [x] Animaciones de transición y splash animado
+- [ ] Animaciones de transición y splash animado
 - [ ] Notificaciones push
 - [ ] Autenticación biométrica (Face ID / huella)
 

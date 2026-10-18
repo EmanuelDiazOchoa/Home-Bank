@@ -479,6 +479,93 @@ end;
 $$ language plpgsql security definer set search_path = public;
 
 -- ============================================
+-- FUNCIÓN: agregar un servicio a pagar
+-- ============================================
+create or replace function create_bill(
+  p_company text,
+  p_category text,
+  p_amount numeric,
+  p_due_date date
+)
+returns json as $$
+declare
+  v_uid uuid := auth.uid();
+  v_account_id uuid;
+  v_company text := trim(p_company);
+  v_bill_id uuid;
+begin
+  if v_uid is null then
+    raise exception 'Sesión no válida';
+  end if;
+
+  if v_company is null or char_length(v_company) < 2 or char_length(v_company) > 40 then
+    raise exception 'El nombre del servicio debe tener entre 2 y 40 caracteres';
+  end if;
+
+  if p_category is null or p_category not in
+     ('Luz', 'Gas', 'Internet', 'Agua', 'Teléfono', 'Tarjeta', 'Alquiler', 'Seguro', 'Otros') then
+    raise exception 'Categoría inválida';
+  end if;
+
+  p_amount := round(p_amount, 2);
+  if p_amount is null or p_amount <= 0 then
+    raise exception 'El importe debe ser mayor a cero';
+  end if;
+
+  if p_amount > 10000000 then
+    raise exception 'El importe máximo por servicio es $10.000.000';
+  end if;
+
+  if p_due_date is null or p_due_date < current_date - 90 or p_due_date > current_date + 365 then
+    raise exception 'La fecha de vencimiento no es válida';
+  end if;
+
+  if (select count(*) from bills where user_id = v_uid and not is_paid) >= 30 then
+    raise exception 'Llegaste al máximo de 30 servicios pendientes';
+  end if;
+
+  select id into v_account_id
+  from accounts
+  where user_id = v_uid
+  order by created_at
+  limit 1;
+
+  if v_account_id is null then
+    raise exception 'No se encontró una cuenta asociada';
+  end if;
+
+  insert into bills (user_id, account_id, company_name, category, amount, due_date)
+  values (v_uid, v_account_id, v_company, p_category, p_amount, p_due_date)
+  returning id into v_bill_id;
+
+  return json_build_object('success', true, 'bill_id', v_bill_id);
+end;
+$$ language plpgsql security definer set search_path = public;
+
+-- ============================================
+-- FUNCIÓN: eliminar un servicio pendiente (los pagados quedan como historial)
+-- ============================================
+create or replace function delete_bill(p_bill_id uuid)
+returns json as $$
+declare
+  v_uid uuid := auth.uid();
+begin
+  if v_uid is null then
+    raise exception 'Sesión no válida';
+  end if;
+
+  delete from bills
+  where id = p_bill_id and user_id = v_uid and not is_paid;
+
+  if not found then
+    raise exception 'No se pudo eliminar el servicio';
+  end if;
+
+  return json_build_object('success', true);
+end;
+$$ language plpgsql security definer set search_path = public;
+
+-- ============================================
 -- ENDURECIMIENTO: el cliente no puede escribir directamente
 -- ============================================
 -- Políticas de escritura de versiones anteriores (ya no se usan)
@@ -511,6 +598,10 @@ grant execute on function pay_bill(uuid, uuid) to authenticated;
 grant execute on function create_investment(uuid, numeric, numeric, integer) to authenticated;
 grant execute on function request_loan(uuid, numeric, numeric, integer) to authenticated;
 grant execute on function create_card(text) to authenticated;
+revoke all on function create_bill(text, text, numeric, date) from public, anon;
+revoke all on function delete_bill(uuid) from public, anon;
+grant execute on function create_bill(text, text, numeric, date) to authenticated;
+grant execute on function delete_bill(uuid) to authenticated;
 
 -- ============================================
 -- DATOS: servicios de ejemplo para usuarios existentes sin ninguno

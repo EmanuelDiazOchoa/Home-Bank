@@ -19,6 +19,13 @@ interface BillState {
   isLoading: boolean;
   fetchBills: () => Promise<void>;
   payBill: (billId: string, accountId: string) => Promise<{ error: string | null }>;
+  createBill: (
+    company: string,
+    category: string,
+    amount: number,
+    dueDate: string
+  ) => Promise<{ error: string | null }>;
+  deleteBill: (billId: string) => Promise<{ error: string | null }>;
 }
 
 export const useBillStore = create<BillState>((set, get) => ({
@@ -47,7 +54,29 @@ export const useBillStore = create<BillState>((set, get) => ({
     if (error) return { error: error.message };
 
     await get().fetchBills();
+    return { error: null };
+  },
 
+  createBill: async (company, category, amount, dueDate) => {
+    const { error } = await supabase.rpc('create_bill', {
+      p_company: company,
+      p_category: category,
+      p_amount: amount,
+      p_due_date: dueDate,
+    });
+
+    if (error) return { error: error.message };
+
+    await get().fetchBills();
+    return { error: null };
+  },
+
+  deleteBill: async (billId) => {
+    const { error } = await supabase.rpc('delete_bill', { p_bill_id: billId });
+
+    if (error) return { error: error.message };
+
+    set({ bills: get().bills.filter((b) => b.id !== billId) });
     return { error: null };
   },
 }));

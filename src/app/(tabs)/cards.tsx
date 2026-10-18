@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator, Switch, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, Switch, TouchableOpacity, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCardStore } from "../../store/cardStore";
@@ -38,6 +38,8 @@ export default function CardsScreen() {
     ]);
   }
 
+  const blockedCount = cards.filter((c) => c.is_blocked).length;
+
   if (isLoading) {
     return (
       <View style={[styles.center, { backgroundColor: theme.background }]}>
@@ -47,12 +49,17 @@ export default function CardsScreen() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <ScrollView
+      style={[styles.container, { backgroundColor: theme.background }]}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
       <View style={styles.headerRow}>
         <View>
           <Text style={[styles.title, { color: theme.text }]}>Mis tarjetas</Text>
           <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
-            {cards.length} {cards.length === 1 ? "tarjeta activa" : "tarjetas activas"}
+            {cards.length} {cards.length === 1 ? "tarjeta" : "tarjetas"}
+            {blockedCount > 0 ? ` · ${blockedCount} ${blockedCount === 1 ? "bloqueada" : "bloqueadas"}` : ""}
           </Text>
         </View>
         <TouchableOpacity
@@ -137,12 +144,13 @@ export default function CardsScreen() {
           </LinearGradient>
         ))
       )}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, paddingTop: 60 },
+  container: { flex: 1 },
+  content: { padding: 20, paddingTop: 60, paddingBottom: 32 },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
   headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 },
   title: { fontSize: 24, fontWeight: "bold" },

@@ -2,16 +2,17 @@ import { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, FlatList } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { useAuthStore } from "../../store/authStore";
 import { useAccountStore } from "../../store/accountStore";
 import { useProfileStore } from "../../store/profileStore";
+import { useBillStore } from "../../store/billStore";
 import { useThemeStore } from "../../store/themeStore";
 import { LinearGradient } from "expo-linear-gradient";
+import { getDaysUntil } from "../../utils/dates";
 
 export default function HomeScreen() {
-  const signOut = useAuthStore((state) => state.signOut);
   const { accounts, transactions, isLoading, fetchAccounts, fetchTransactions } = useAccountStore();
   const { fullName, fetchProfile } = useProfileStore();
+  const { bills, fetchBills } = useBillStore();
   const { theme } = useThemeStore();
   const [showBalance, setShowBalance] = useState(true);
   const router = useRouter();
@@ -19,6 +20,7 @@ export default function HomeScreen() {
   useEffect(() => {
     fetchAccounts();
     fetchProfile();
+    fetchBills();
   }, []);
 
   useEffect(() => {
@@ -34,7 +36,12 @@ export default function HomeScreen() {
   }
 
   const mainAccount = accounts[0];
-  const firstName = fullName?.split(" ")[0] || "";
+  const firstName = fullName?.trim().split(" ")[0] || "";
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Buenos días" : hour < 20 ? "Buenas tardes" : "Buenas noches";
+  const initial = (fullName?.trim().charAt(0) || "U").toUpperCase();
+  // Servicios vencidos o que vencen en los próximos 5 días
+  const dueAlerts = bills.filter((b) => !b.is_paid && getDaysUntil(b.due_date) <= 5).length;
 
   const quickActions = [
     { label: "Transferir", icon: "swap-horizontal" as const, route: "/transfer" },
@@ -46,17 +53,41 @@ export default function HomeScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.header}>
-        <Text style={[styles.greeting, { color: theme.text }]}>
-          Hola{firstName ? `, ${firstName}` : ""} 👋
-        </Text>
-        <View style={styles.headerActions}>
-          <TouchableOpacity onPress={() => router.push("/settings")}>
-            <Ionicons name="settings-outline" size={22} color={theme.text} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={signOut}>
-            <Text style={[styles.logout, { color: theme.danger }]}>Salir</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          style={styles.profile}
+          onPress={() => router.push("/settings")}
+          accessibilityRole="button"
+          accessibilityLabel="Abrir ajustes y perfil"
+        >
+          <View style={[styles.avatar, { backgroundColor: theme.primary }]}>
+            <Text style={styles.avatarText}>{initial}</Text>
+            <View style={[styles.avatarBadge, { backgroundColor: theme.surface, borderColor: theme.background }]}>
+              <Ionicons name="settings-sharp" size={9} color={theme.textSecondary} />
+            </View>
+          </View>
+          <View style={{ flexShrink: 1 }}>
+            <Text style={[styles.greetingLabel, { color: theme.textSecondary }]}>{greeting}</Text>
+            <Text style={[styles.greetingName, { color: theme.text }]} numberOfLines={1}>
+              {firstName || "Bienvenido"}
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.bellButton, { backgroundColor: theme.surface }]}
+          onPress={() => router.push("/bills")}
+          accessibilityRole="button"
+          accessibilityLabel={
+            dueAlerts > 0 ? `${dueAlerts} servicios vencidos o por vencer` : "Sin vencimientos próximos"
+          }
+        >
+          <Ionicons name={dueAlerts > 0 ? "notifications" : "notifications-outline"} size={20} color={theme.text} />
+          {dueAlerts > 0 && (
+            <View style={[styles.bellBadge, { backgroundColor: theme.danger, borderColor: theme.background }]}>
+              <Text style={styles.bellBadgeText}>{dueAlerts > 9 ? "9+" : dueAlerts}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
 
       {mainAccount ? (
@@ -131,12 +162,39 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 24 },
+  profile: { flexDirection: "row", alignItems: "center", gap: 12, flexShrink: 1 },
+  avatar: { width: 44, height: 44, borderRadius: 22, justifyContent: "center", alignItems: "center" },
+  avatarText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
+  avatarBadge: {
+    position: "absolute",
+    right: -2,
+    bottom: -2,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    borderWidth: 2,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  greetingLabel: { fontSize: 12 },
+  greetingName: { fontSize: 18, fontWeight: "bold" },
+  bellButton: { width: 42, height: 42, borderRadius: 21, justifyContent: "center", alignItems: "center" },
+  bellBadge: {
+    position: "absolute",
+    top: -2,
+    right: -2,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    borderWidth: 2,
+    paddingHorizontal: 3,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  bellBadgeText: { color: "#fff", fontSize: 10, fontWeight: "bold" },
   container: { flex: 1, padding: 20, paddingTop: 60 },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
-  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 },
-  headerActions: { flexDirection: "row", alignItems: "center", gap: 16 },
-  greeting: { fontSize: 22, fontWeight: "bold" },
-  logout: { fontWeight: "600" },
   card: { borderRadius: 16, padding: 20, marginBottom: 20 },
   cardTopRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 },
   cardLabel: { color: "#fff", opacity: 0.8, fontSize: 13 },

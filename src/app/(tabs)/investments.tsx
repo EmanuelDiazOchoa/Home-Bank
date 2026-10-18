@@ -7,6 +7,7 @@ import { useAccountStore } from "../../store/accountStore";
 import { useThemeStore } from "../../store/themeStore";
 import { showAlert } from "../../utils/appAlert";
 import { formatMoney } from "../../utils/format";
+import { formatDateAR } from "../../utils/dates";
 
 
 const FIXED_TERM_RATE = 40;
@@ -159,7 +160,7 @@ export default function InvestmentsScreen() {
                   ${inv.amount.toLocaleString("es-AR")}
                 </Text>
                 <Text style={[styles.listItemSubtitle, { color: theme.textSecondary }]}>
-                  {inv.term_days} días • Vence: {new Date(inv.maturity_date).toLocaleDateString("es-AR")}
+                  {inv.term_days} días • Vence: {formatDateAR(inv.maturity_date)}
                 </Text>
               </View>
             ))

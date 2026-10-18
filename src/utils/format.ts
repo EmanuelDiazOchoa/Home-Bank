@@ -1,3 +1,9 @@
-export function formatMoney(value: number) {
-  return "$" + value.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+export function formatMoney(value: number, decimals = 2) {
+  return (
+    "$" +
+    value.toLocaleString("es-AR", {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    })
+  );
 }
