@@ -49,10 +49,6 @@ export default function TransferScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-        <Text style={{ color: theme.primary, fontSize: 16 }}>← Volver</Text>
-      </TouchableOpacity>
-
       <Text style={[styles.title, { color: theme.text }]}>Nueva transferencia</Text>
 
       <Text style={[styles.balanceText, { color: theme.textSecondary }]}>
@@ -98,7 +94,6 @@ export default function TransferScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, paddingTop: 60 },
-  backButton: { marginBottom: 20 },
   title: { fontSize: 24, fontWeight: "bold", marginBottom: 8 },
   balanceText: { fontSize: 14, marginBottom: 24 },
   input: {

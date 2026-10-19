@@ -20,15 +20,15 @@ App móvil que replica las funcionalidades core de un banco real — cuentas, tr
 
 | Inicio | Transferencia | Tarjetas |
 |:---:|:---:|:---:|
-| <img src="./docs/screenshots/home.png" width="220" /> | <img src="./docs/screenshots/transfer.png" width="220" /> | <img src="./docs/screenshots/cards.png" width="220" /> |
+| <img src="./docs/screenshots/home.jpeg" width="220" /> | <img src="./docs/screenshots/transfer.jpeg" width="220" /> | <img src="./docs/screenshots/cards.jpg" width="220" /> |
 
 | Pagos | Inversiones | Análisis |
 |:---:|:---:|:---:|
-| <img src="./docs/screenshots/bills.png" width="220" /> | <img src="./docs/screenshots/investments.png" width="220" /> | <img src="./docs/screenshots/analytics.png" width="220" /> |
+| <img src="./docs/screenshots/bills.jpeg" width="220" /> | <img src="./docs/screenshots/investments.jpg" width="220" /> | <img src="./docs/screenshots/analytics.jpeg" width="220" /> |
 
 | Ajustes | Modo claro | Otra paleta |
 |:---:|:---:|:---:|
-| <img src="./docs/screenshots/settings.png" width="220" /> | <img src="./docs/screenshots/home-light.png" width="220" /> | <img src="./docs/screenshots/home-purple.png" width="220" /> |
+| <img src="./docs/screenshots/settings.jpeg" width="220" /> | <img src="./docs/screenshots/home-light.jpeg" width="220" /> | <img src="./docs/screenshots/bills-other.jpg" width="220" /> |
 
 </div>
 
