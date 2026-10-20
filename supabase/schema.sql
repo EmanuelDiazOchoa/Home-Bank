@@ -224,6 +224,8 @@ begin
     raise exception 'El monto debe ser mayor a cero';
   end if;
 
+  transfer_description := left(coalesce(nullif(trim(transfer_description), ''), 'Transferencia'), 80);
+
   -- Bloquea la fila solo si la cuenta de origen pertenece a quien llama
   select balance into v_origin_balance
   from accounts
@@ -236,7 +238,7 @@ begin
 
   select id into v_dest_id
   from accounts
-  where alias = lower(trim(destination_alias));
+  where alias = lower(trim(destination_alias)) or cbu = trim(destination_alias);
 
   if v_dest_id is null then
     raise exception 'No se encontró ninguna cuenta con ese alias';

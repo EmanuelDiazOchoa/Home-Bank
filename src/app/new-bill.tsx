@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useBillStore } from "../store/billStore";
 import { useThemeStore } from "../store/themeStore";
 import { showAlert } from "../utils/appAlert";
-import { formatMoney } from "../utils/format";
+import { formatMoney, parseAmount } from "../utils/format";
 import {
   addDaysISO,
   endOfMonthISO,
@@ -16,19 +16,6 @@ import {
 } from "../utils/dates";
 import { BILL_CATEGORIES, getCategoryMeta } from "../constants/billCategories";
 
-// "15.000,50" -> 15000.5 | "15000.5" -> 15000.5 | "15.000" -> 15000 | "15,5" -> 15.5
-function parseAmount(text: string): number | null {
-  let t = text.replace(/\s/g, "");
-  if (t === "") return null;
-  if (t.includes(",")) {
-    t = t.replace(/\./g, "").replace(",", ".");
-  } else {
-    const dots = (t.match(/\./g) || []).length;
-    if (dots > 1 || (dots === 1 && /^\d{1,3}\.\d{3}$/.test(t))) t = t.replace(/\./g, "");
-  }
-  const n = Number(t);
-  return Number.isFinite(n) ? n : null;
-}
 
 const QUICK_DATES = [
   { label: "Hoy", get: () => addDaysISO(0) },

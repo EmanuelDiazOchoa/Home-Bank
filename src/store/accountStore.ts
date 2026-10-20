@@ -70,7 +70,6 @@ export const useAccountStore = create<AccountState>((set) => ({
     }
   },
 
-  // Movimientos de los últimos N meses (para la pantalla de Análisis)
   fetchAnalyticsTransactions: async (accountId: string, months = 6) => {
     const since = new Date();
     since.setHours(0, 0, 0, 0);

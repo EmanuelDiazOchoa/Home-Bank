@@ -6,7 +6,7 @@ import { useLoanStore } from "../../store/loanStore";
 import { useAccountStore } from "../../store/accountStore";
 import { useThemeStore } from "../../store/themeStore";
 import { showAlert } from "../../utils/appAlert";
-import { formatMoney } from "../../utils/format";
+import { formatMoney, parseAmount } from "../../utils/format";
 import { formatDateAR } from "../../utils/dates";
 
 
@@ -32,21 +32,21 @@ export default function InvestmentsScreen() {
   }, []);
 
   function calculateInvestmentReturn() {
-    const amount = parseFloat(investAmount) || 0;
+    const amount = (parseAmount(investAmount) ?? 0);
     const days = parseInt(termDays) || 0;
     const interest = amount * (FIXED_TERM_RATE / 100) * (days / 365);
     return { interest, total: amount + interest };
   }
 
   function calculateLoanInstallment() {
-    const amount = parseFloat(loanAmount) || 0;
+    const amount = (parseAmount(loanAmount) ?? 0);
     const numInstallments = parseInt(installments) || 1;
     const totalWithInterest = amount * (1 + LOAN_RATE / 100);
     return totalWithInterest / numInstallments;
   }
 
  async function handleInvest() {
-    const amount = parseFloat(investAmount);
+    const amount = parseAmount(investAmount) ?? 0;
     const days = parseInt(termDays);
     if (!amount || amount <= 0) {
       showAlert("Error", "Ingresá un monto válido");
@@ -63,7 +63,7 @@ export default function InvestmentsScreen() {
   }
 
   async function handleLoan() {
-    const amount = parseFloat(loanAmount);
+    const amount = parseAmount(loanAmount) ?? 0;
     const numInstallments = parseInt(installments);
     if (!amount || amount <= 0) {
       showAlert("Error", "Ingresá un monto válido");
@@ -118,8 +118,8 @@ export default function InvestmentsScreen() {
             placeholder="Monto a invertir"
             placeholderTextColor={theme.textSecondary}
             value={investAmount}
-            onChangeText={setInvestAmount}
-            keyboardType="numeric"
+            onChangeText={(t) => setInvestAmount(t.replace(/[^0-9.,]/g, ""))}
+            keyboardType="decimal-pad"
           />
           <TextInput
             style={[styles.input, { borderColor: theme.border, color: theme.text }]}
@@ -175,8 +175,8 @@ export default function InvestmentsScreen() {
             placeholder="Monto a solicitar"
             placeholderTextColor={theme.textSecondary}
             value={loanAmount}
-            onChangeText={setLoanAmount}
-            keyboardType="numeric"
+            onChangeText={(t) => setLoanAmount(t.replace(/[^0-9.,]/g, ""))}
+            keyboardType="decimal-pad"
           />
           <TextInput
             style={[styles.input, { borderColor: theme.border, color: theme.text }]}

@@ -7,7 +7,6 @@ export interface CategoryMeta {
   color: string;
 }
 
-// Categorías que se pueden elegir al agregar un servicio (la base de datos valida la misma lista)
 export const BILL_CATEGORIES = [
   "Luz",
   "Gas",

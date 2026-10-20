@@ -37,7 +37,6 @@ export function endOfMonthISO(): string {
   return toISODate(new Date(now.getFullYear(), now.getMonth() + 1, 0));
 }
 
-// "25/12/2026" -> "2026-12-25" (devuelve null si no es una fecha real)
 export function parseARDate(text: string): string | null {
   const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(text.trim());
   if (!match) return null;
@@ -49,7 +48,6 @@ export function parseARDate(text: string): string | null {
   return toISODate(date);
 }
 
-// Inserta las barras mientras se escribe: "25122026" -> "25/12/2026"
 export function maskARDate(text: string): string {
   const digits = text.replace(/\D/g, "").slice(0, 8);
   if (digits.length <= 2) return digits;
@@ -57,7 +55,6 @@ export function maskARDate(text: string): string {
   return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
 }
 
-// Para timestamps con hora (ej. paid_at): se convierte a fecha local
 export function formatTimestampAR(timestamp: string): string {
   const d = new Date(timestamp);
   return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
