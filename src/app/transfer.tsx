@@ -89,7 +89,7 @@ export default function TransferScreen() {
       <Text style={[styles.label, { color: theme.textSecondary }]}>DESTINATARIO</Text>
       <TextInput
         style={inputStyle}
-        placeholder="Alias o CBU"
+        placeholder="Ej: nombre.apellido.homebank"
         placeholderTextColor={theme.textSecondary}
         value={alias}
         onChangeText={setAlias}

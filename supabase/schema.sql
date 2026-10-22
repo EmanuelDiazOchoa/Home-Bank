@@ -241,7 +241,7 @@ begin
   where alias = lower(trim(destination_alias)) or cbu = trim(destination_alias);
 
   if v_dest_id is null then
-    raise exception 'No se encontró ninguna cuenta con ese alias';
+    raise exception 'No se encontró ninguna cuenta con ese alias o CBU. Revisá que esté completo (ej: nombre.apellido.homebank)';
   end if;
 
   if v_dest_id = origin_account_id then
