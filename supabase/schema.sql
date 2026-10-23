@@ -617,3 +617,10 @@ cross join (values
   ('Movistar', 'Internet', 12000, -2)
 ) as v(company, category, amount, days)
 where not exists (select 1 from bills b where b.user_id = a.user_id);
+
+select
+  (select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname='public' and p.proname in
+    ('transfer_money','pay_bill','create_investment','request_loan','create_card','create_bill','delete_bill')) as funciones,
+  pg_get_functiondef(to_regprocedure('public.transfer_money(uuid,text,numeric,text)')) ilike '%cbu = trim%' as acepta_cbu,
+  has_table_privilege('authenticated','public.accounts','UPDATE') as puede_modificar_saldo;
