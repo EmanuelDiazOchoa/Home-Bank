@@ -61,21 +61,6 @@ function confirmSignOut() {
           label="Cambiar contraseña"
           theme={theme}
           onPress={() => showAlert("Próximamente", "Esta función estará disponible pronto.")}
-        />
-        <Divider theme={theme} />
-        <SettingsRow
-          icon="finger-print-outline"
-          label="Biometría"
-          theme={theme}
-          rightLabel="Próximamente"
-          onPress={() => showAlert("Próximamente", "Autenticación biométrica en desarrollo.")}
-        />
-        <Divider theme={theme} />
-        <SettingsRow
-          icon="phone-portrait-outline"
-          label="Dispositivos vinculados"
-          theme={theme}
-          onPress={() => showAlert("Próximamente", "Esta función estará disponible pronto.")}
           isLast
         />
       </View>
@@ -138,16 +123,9 @@ function confirmSignOut() {
       <View style={[styles.section, { backgroundColor: theme.surface }]}>
         <SettingsRow
           icon="help-circle-outline"
-          label="Centro de ayuda"
+          label="Ayuda y soporte"
           theme={theme}
-          onPress={() => showAlert("Próximamente", "Esta función estará disponible pronto.")}
-        />
-        <Divider theme={theme} />
-        <SettingsRow
-          icon="chatbubble-ellipses-outline"
-          label="Contactar soporte"
-          theme={theme}
-          onPress={() => showAlert("Próximamente", "Esta función estará disponible pronto.")}
+          onPress={() => router.push("/help")}
         />
         <Divider theme={theme} />
         <SettingsRow
@@ -155,7 +133,12 @@ function confirmSignOut() {
           label="Acerca de Home Bank"
           theme={theme}
           rightLabel="v1.0.0"
-          onPress={() => {}}
+          onPress={() =>
+            showAlert(
+              "Home Bank v1.0.0",
+              "Aplicación de demostración desarrollada por Emanuel Díaz Ochoa con React Native, Expo y Supabase. El dinero es simulado."
+            )
+          }
           isLast
         />
       </View>
